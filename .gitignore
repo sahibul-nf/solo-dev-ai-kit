@@ -1,2 +1,27 @@
 .DS_Store
 *.bak
+*.swp
+*.tmp
+
+# Secrets — never commit (kit repo or bootstrapped projects)
+.env
+.env.*
+!.env.example
+!.env.*.example
+config.local.env
+.workflow-kit.local.env
+*.pem
+*.key
+*.p12
+credentials.json
+secrets.json
+**/service-account*.json
+
+# Local bootstrap / triage scratch files
+.tmp-*
+/tmp/
+
+# Editor / OS
+.idea/
+.vscode/
+*.log

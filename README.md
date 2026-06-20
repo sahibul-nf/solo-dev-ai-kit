@@ -22,7 +22,7 @@ Docs: [agents.md](https://agents.md/) · [Cursor rules](https://cursor.com/docs/
 ## Quick start
 
 ```bash
-git clone https://github.com/YOU/solo-dev-ai-kit.git
+git clone https://github.com/sahibul-nf/solo-dev-ai-kit.git
 cd solo-dev-ai-kit
 
 # Personal project — Cursor + Antigravity only
@@ -101,3 +101,11 @@ Standalone repo — not inside any client app. `git init` → push → bootstrap
 ## Origin
 
 Workflow patterns from solo-dev production practice; maintained separately from client repos.
+
+## Security
+
+Templates and scripts only — **no secrets** in this repo. See [SECURITY.md](SECURITY.md).
+
+- `.workflow-kit.env` = repo metadata (safe to commit); never put tokens there.
+- `gh` auth stays on your device (`gh auth login`).
+- Report issues: [Security Advisories](https://github.com/sahibul-nf/solo-dev-ai-kit/security/advisories/new).
