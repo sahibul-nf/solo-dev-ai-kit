@@ -20,6 +20,7 @@ Files written into **your app repo** by `bootstrap.sh`:
 | `.workflow-kit.env` | Yes* | Repo name, branch names, project title — **no tokens** |
 | `.workflow-kit/installed` | Yes | Metadata only |
 | `scripts/gh-*.sh` | Yes | Shell scripts; no embedded secrets |
+| `docs/how-to-run.md` | Yes* | Dev URL and test info — no secrets |
 
 \*If you add custom secrets to `.workflow-kit.env`, **do not commit** — use `.workflow-kit.local.env` (gitignored) or environment variables instead.
 

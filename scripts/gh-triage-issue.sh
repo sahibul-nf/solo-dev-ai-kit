@@ -32,6 +32,11 @@ done
 [[ -n "$TITLE" ]] || { echo "Missing --title" >&2; exit 1; }
 [[ -n "$BODY_FILE" && -f "$BODY_FILE" ]] || { echo "Missing --body-file or --body" >&2; exit 1; }
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [[ -x "$SCRIPT_DIR/gh-validate-issue-body.sh" ]]; then
+  "$SCRIPT_DIR/gh-validate-issue-body.sh" --body-file "$BODY_FILE"
+fi
+
 if gh issue list --repo "$REPO" --state open --search "$TITLE in:title" --json title \
   | jq -e --arg t "$TITLE" '.[] | select(.title==$t)' >/dev/null 2>&1; then
   existing="$(gh issue list --repo "$REPO" --state open --search "$TITLE in:title" --json number,url --jq '.[0]')"

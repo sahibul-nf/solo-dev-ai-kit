@@ -9,8 +9,8 @@ This project uses **one canonical file** (`AGENTS.md`) plus **platform-native** 
 | Platform | Official file(s) | What bootstrap installs |
 |----------|------------------|-------------------------|
 | **Codex** | `AGENTS.md` | Nothing extra — Codex reads `AGENTS.md` natively |
-| **Cursor** | `AGENTS.md`, `.cursor/rules/*.mdc` | `AGENTS.md` + `github-issue-workflow.mdc` (`alwaysApply: true`) |
-| **Antigravity** | `.agents/rules/*.md` | `issue-workflow.md` (`trigger: always_on`) |
+| **Cursor** | `AGENTS.md`, `.cursor/rules/*.mdc`, `.cursor/commands/` | Thin router rule + slash commands |
+| **Antigravity** | `.agents/rules/*.md` | Thin pointer (`trigger: always_on`) |
 | **Claude Code** | `CLAUDE.md` or `.claude/CLAUDE.md` | Minimal `CLAUDE.md` → `AGENTS.md` |
 | **Gemini CLI** | `GEMINI.md`, `AGENTS.md` | `.gemini/settings.json` + optional `GEMINI.md` stub |
 
@@ -33,11 +33,21 @@ Re-run bootstrap from `solo-dev-ai-kit`:
 /path/to/solo-dev-ai-kit/bootstrap.sh --target . --repo {{GH_REPO}} --tools cursor,antigravity,claude
 ```
 
-`AGENTS.md` is always refreshed. Platform files are added/updated per `--tools`.
+Use `--force` to overwrite `AGENTS.md` if you customized it. Without `--force`, local edits are preserved.
+
+**Install on a new machine:** paste [INSTALL_PROMPT.md](https://github.com/sahibul-nf/solo-dev-ai-kit/blob/main/INSTALL_PROMPT.md) to your AI agent — no manual terminal required.
 
 ## Why both `AGENTS.md` and `.cursor/rules`?
 
 - **`AGENTS.md`** — canonical content; read by Codex, Cursor, and Gemini CLI.
-- **`.cursor/rules/*.mdc`** — Cursor-native `alwaysApply` rules for triage (recommended when triage must run every session without `@AGENTS.md`).
+- **`.cursor/rules/*.mdc`** — thin always-on router so Cursor classifies intent every session without `@AGENTS.md`.
 
-Same content strategy for Antigravity: `.agents/rules/` with `trigger: always_on`.
+Antigravity uses the same pattern: `.agents/rules/` pointer with `trigger: always_on`.
+
+## UI verification tools
+
+Bootstrap reports availability (does not install browsers):
+
+1. **Cursor IDE browser** — default in Cursor; no project install.
+2. **Playwright CLI** — optional fallback if already on device/project.
+3. Fill in `docs/how-to-run.md` with local dev URL so browser tools can reach the app.

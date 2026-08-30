@@ -9,7 +9,7 @@ Portable bootstrap for **issue triage → implement on approval → close after 
 | Platform | Official file | This kit installs |
 |----------|---------------|-------------------|
 | **Codex** | `AGENTS.md` | Uses root `AGENTS.md` only — no `CODEX.md` |
-| **Cursor** | `AGENTS.md` + `.cursor/rules/*.mdc` | Both — triage rule with `alwaysApply: true` |
+| **Cursor** | `AGENTS.md` + `.cursor/rules/*.mdc` | Thin router rule + slash commands |
 | **Antigravity** | `.agents/rules/*.md` | `trigger: always_on` rules → point to `AGENTS.md` |
 | **Claude Code** | `CLAUDE.md` | Minimal stub: “follow `AGENTS.md`” |
 | **Gemini CLI** | `GEMINI.md` / `AGENTS.md` | `.gemini/settings.json` + optional `GEMINI.md` stub |
@@ -20,6 +20,25 @@ Docs: [agents.md](https://agents.md/) · [Cursor rules](https://cursor.com/docs/
 **All platforms (future-proof):** default — `cursor,antigravity,codex,claude,gemini`
 
 ## Quick start
+
+### Option A — Install via AI prompt (recommended)
+
+You do **not** need to run terminal commands yourself. Open your **app project** in Cursor Agent mode and paste a prompt from:
+
+- **[INSTALL_PROMPT.md](INSTALL_PROMPT.md)** (English)
+- **[INSTALL_PROMPT.id.md](INSTALL_PROMPT.id.md)** (Bahasa Indonesia)
+
+Or paste this one-liner:
+
+```text
+Clone https://github.com/sahibul-nf/solo-dev-ai-kit, bootstrap solo-dev-ai-kit into this project (--tools cursor,antigravity --run-github-setup), fill docs/how-to-run.md, smoke-test triage only. I won't run terminal commands — you do.
+```
+
+The agent clones the kit (if needed), runs `bootstrap.sh`, fills `docs/how-to-run.md`, and reports what was installed.
+
+See also [MASTER_PROMPT.md](MASTER_PROMPT.md) for a customizable template.
+
+### Option B — Install via terminal
 
 ```bash
 git clone https://github.com/sahibul-nf/solo-dev-ai-kit.git
@@ -52,8 +71,10 @@ your-project/
 ├── AGENTS.md                 # Canonical (all agents)
 ├── docs/
 │   ├── github-workflow.md
-│   └── agent-platforms.md    # Per-platform official setup
+│   ├── agent-platforms.md    # Per-platform official setup
+│   └── how-to-run.md         # Dev URL, tests, test accounts (fill in)
 ├── .cursor/rules/              # if cursor
+├── .cursor/commands/           # if cursor (/triage, /implement, /verify, /close)
 ├── .agents/rules/              # if antigravity
 ├── CLAUDE.md                   # if claude (stub only)
 ├── GEMINI.md + .gemini/        # if gemini
@@ -65,6 +86,14 @@ your-project/
 Codex needs **no extra file** — it reads `AGENTS.md` natively.
 
 ## Re-bootstrap / add a platform later
+
+**Via AI:** open the app project and say:
+
+```text
+Re-bootstrap solo-dev-ai-kit into this project from [path/to/solo-dev-ai-kit] with --tools cursor,antigravity,claude. Use --force only if I ask to overwrite AGENTS.md.
+```
+
+**Via terminal:**
 
 ```bash
 /path/to/solo-dev-ai-kit/bootstrap.sh \
@@ -87,12 +116,17 @@ Codex needs **no extra file** — it reads `AGENTS.md` natively.
 | `--project-title` | `{repo} delivery` | GitHub Project name |
 | `--client-reports` | off | `client-facing` label |
 | `--run-github-setup` | off | Run `gh-setup-all.sh` |
+| `--force` | off | Overwrite `AGENTS.md` and `docs/how-to-run.md` if they exist |
 
 ## Workflow (3 phases)
 
 1. **Triage** — describe work → issue + board → stop
-2. **Implement** — `Implement #N`
-3. **Close-out** — `sudah work` → `gh-close-verified-issue.sh`
+2. **Implement** — `Implement #N` → self-verify → board **QA**
+3. **Close-out** — `sudah work` → `gh-close-verified-issue.sh` (closes issue + **Done**)
+
+**Intent router:** tiny fixes skip issue; real work gets AC checklist. See `AGENTS.md`.
+
+**UI verify:** Cursor browser (default); Playwright optional — kit checks, never auto-installs.
 
 ## Publish
 

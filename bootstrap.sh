@@ -5,6 +5,7 @@
 #   ./bootstrap.sh --target /path/to/my-app --repo owner/my-app --tools cursor,antigravity
 #   ./bootstrap.sh --target . --main-only          # single branch (main/master)
 #   ./bootstrap.sh --target . --integration-branch dev --production-branch main
+#   ./bootstrap.sh --target . --force              # overwrite AGENTS.md even if customized
 set -euo pipefail
 
 KIT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -20,12 +21,13 @@ PROJECT_TITLE=""
 CLIENT_REPORTS=false
 RUN_GITHUB=false
 MAIN_ONLY=false
+FORCE=false
 PROJECT_BOARD_URL="(set after ./scripts/gh-setup-project.sh)"
 EXTRA_LABELS=""
 SINGLE_BRANCH=false
 
 usage() {
-  sed -n '2,8p' "$0" | sed 's/^# \?//'
+  sed -n '2,9p' "$0" | sed 's/^# \?//'
   exit "${1:-0}"
 }
 
@@ -42,6 +44,7 @@ while [[ $# -gt 0 ]]; do
     --client-reports) CLIENT_REPORTS=true; shift ;;
     --run-github-setup) RUN_GITHUB=true; shift ;;
     --main-only) MAIN_ONLY=true; shift ;;
+    --force) FORCE=true; shift ;;
     -h|--help) usage 0 ;;
     *) echo "Unknown: $1" >&2; usage 1 ;;
   esac
@@ -149,6 +152,15 @@ Path(sys.argv[2]).write_text(re.sub(r"\{\{(\w+)\}\}", repl, text))
 PY
 }
 
+render_if_allowed() {
+  local src="$1" dst="$2"
+  if [[ -f "$dst" && "$FORCE" != true ]]; then
+    echo "  skip (exists): $(basename "$dst") — use --force to overwrite"
+    return 0
+  fi
+  render_tpl "$src" "$dst"
+}
+
 export_snippet() {
   local snippet="$1" var="$2"
   local tmp
@@ -202,9 +214,10 @@ HAS_CLIENT_REPORTS=$CLIENT_REPORTS
 EXTRA_LABELS=$EXTRA_LABELS
 EOF
 
-render_tpl "$KIT_DIR/templates/AGENTS.md.tpl" "$TARGET/AGENTS.md"
+render_if_allowed "$KIT_DIR/templates/AGENTS.md.tpl" "$TARGET/AGENTS.md"
 render_tpl "$KIT_DIR/templates/docs/github-workflow.md.tpl" "$TARGET/docs/github-workflow.md"
 render_tpl "$KIT_DIR/templates/docs/agent-platforms.md.tpl" "$TARGET/docs/agent-platforms.md"
+render_if_allowed "$KIT_DIR/templates/docs/how-to-run.md.tpl" "$TARGET/docs/how-to-run.md"
 cp "$KIT_DIR/templates/issue-body.example.md" "$TARGET/docs/issue-body.example.md"
 
 [[ -f "$TARGET/CHANGELOG.md" ]] || cp "$KIT_DIR/templates/CHANGELOG.md.tpl" "$TARGET/CHANGELOG.md"
@@ -225,9 +238,12 @@ if has_tool cursor; then
   mkdir -p "$TARGET/.cursor/rules"
   render_tpl "$KIT_DIR/agents/cursor/github-issue-workflow.mdc.tpl" "$TARGET/.cursor/rules/github-issue-workflow.mdc"
   cp "$KIT_DIR/agents/cursor/code-principles.mdc" "$TARGET/.cursor/rules/"
-  echo "  ✓ Cursor"
+  mkdir -p "$TARGET/.cursor/commands"
+  cp "$KIT_DIR/agents/cursor/commands/"*.md "$TARGET/.cursor/commands/"
+  echo "  ✓ Cursor (rules + commands)"
 else
   rm -f "$TARGET/.cursor/rules/github-issue-workflow.mdc" "$TARGET/.cursor/rules/code-principles.mdc"
+  rm -rf "$TARGET/.cursor/commands"
 fi
 
 if has_tool antigravity; then
@@ -260,7 +276,7 @@ fi
 
 mkdir -p "$TARGET/.workflow-kit"
 {
-  echo "kit_version=3"
+  echo "kit_version=4"
   echo "tools=$TOOLS"
   echo "single_branch=$SINGLE_BRANCH"
   echo "installed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -269,21 +285,34 @@ mkdir -p "$TARGET/.workflow-kit"
 echo ""
 echo "Bootstrap complete → $TARGET/AGENTS.md"
 
+echo ""
+if [[ -x "$TARGET/scripts/gh-check-ui-tools.sh" ]]; then
+  (cd "$TARGET" && ./scripts/gh-check-ui-tools.sh) || true
+fi
+
 if $RUN_GITHUB; then
+  echo ""
   echo "Running GitHub setup …"
-  (cd "$TARGET" && ./scripts/gh-setup-all.sh "$GH_REPO") || true
-  if [[ -f "$TARGET/.workflow-kit.env" ]]; then
-    # shellcheck disable=SC1090
-    source "$TARGET/.workflow-kit.env"
-    if [[ -n "${GH_PROJECT_NUM:-}" ]] && command -v gh &>/dev/null; then
-      PROJECT_BOARD_URL="$(gh project view "$GH_PROJECT_NUM" --owner "${GH_PROJECT_OWNER:-@me}" --format json --jq .url 2>/dev/null || echo "$PROJECT_BOARD_URL")"
-      export PROJECT_BOARD_URL
-      export_snippet "$([[ "$SINGLE_BRANCH" == true ]] && echo git-deploy-single.md || echo git-deploy-dual.md)" GIT_DEPLOY_SECTION
-      export_snippet "$([[ "$SINGLE_BRANCH" == true ]] && echo ci-deploy-single.md || echo ci-deploy-dual.md)" CI_DEPLOY_SECTION
-      export_snippet "$([[ "$SINGLE_BRANCH" == true ]] && echo merge-push-single.md || echo merge-push-dual.md)" MERGE_PUSH_SECTION
-      render_tpl "$KIT_DIR/templates/AGENTS.md.tpl" "$TARGET/AGENTS.md"
-      render_tpl "$KIT_DIR/templates/docs/github-workflow.md.tpl" "$TARGET/docs/github-workflow.md"
-      render_tpl "$KIT_DIR/templates/docs/agent-platforms.md.tpl" "$TARGET/docs/agent-platforms.md"
+  if (cd "$TARGET" && ./scripts/gh-setup-all.sh "$GH_REPO"); then
+    if [[ -f "$TARGET/.workflow-kit.env" ]]; then
+      # shellcheck disable=SC1090
+      source "$TARGET/.workflow-kit.env"
+      if [[ -n "${GH_PROJECT_NUM:-}" ]] && command -v gh &>/dev/null; then
+        PROJECT_BOARD_URL="$(gh project view "$GH_PROJECT_NUM" --owner "${GH_PROJECT_OWNER:-@me}" --format json --jq .url 2>/dev/null || echo "$PROJECT_BOARD_URL")"
+        export PROJECT_BOARD_URL
+        export_snippet "$([[ "$SINGLE_BRANCH" == true ]] && echo git-deploy-single.md || echo git-deploy-dual.md)" GIT_DEPLOY_SECTION
+        export_snippet "$([[ "$SINGLE_BRANCH" == true ]] && echo ci-deploy-single.md || echo ci-deploy-dual.md)" CI_DEPLOY_SECTION
+        export_snippet "$([[ "$SINGLE_BRANCH" == true ]] && echo merge-push-single.md || echo merge-push-dual.md)" MERGE_PUSH_SECTION
+        render_tpl "$KIT_DIR/templates/AGENTS.md.tpl" "$TARGET/AGENTS.md"
+        render_tpl "$KIT_DIR/templates/docs/github-workflow.md.tpl" "$TARGET/docs/github-workflow.md"
+        render_tpl "$KIT_DIR/templates/docs/agent-platforms.md.tpl" "$TARGET/docs/agent-platforms.md"
+      else
+        echo "warning: GH_PROJECT_NUM not set after setup — board URLs in docs may be placeholders" >&2
+      fi
     fi
+  else
+    echo "error: GitHub setup failed. Fix auth/scopes and re-run:" >&2
+    echo "  cd \"$TARGET\" && ./scripts/gh-setup-all.sh $GH_REPO" >&2
+    exit 1
   fi
 fi

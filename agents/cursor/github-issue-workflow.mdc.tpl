@@ -1,65 +1,19 @@
 ---
-description: Default triage — investigate, file GitHub issues, add to board; implement only when approved.
+description: Route to AGENTS.md — classify intent; do not code unless tiny, #N, or skip issue.
 alwaysApply: true
 ---
 
-# GitHub issue triage & delivery
+# Workflow router
 
-Canonical: `AGENTS.md`, `docs/github-workflow.md`
+**Canonical rules:** read `AGENTS.md` in full. Do not duplicate workflow here.
 
-## When this applies
+## Before you act
 
-Any **feature**, **bug**, **improvement**, or stakeholder request — even without "create an issue".
+1. **Classify intent** (question · tiny fix · triage · implement `#N` · close-out · merge/push).
+2. **Questions** → answer only.
+3. **Tiny** (≤1–2 files, obvious) → implement + self-verify per `AGENTS.md`; say *skipped issue*.
+4. **Feature/bug/improvement** without `#N` → Phase 1 triage only; **no code**.
+5. **`Implement #N` / `kerjakan #N`** → Phase 2; self-verify before claiming done; board → QA.
+6. **`sudah work` / `ok` for `#N`** → Phase 3 close-out script.
 
-**Exceptions (implement directly):**
-- User names an issue: *Implement #5*, *Fix #12*, *work on #N*
-- User says *skip issue*, *just fix*, *no issue* (trivial only)
-- Pure questions
-
-## Phase 1 — Triage (default; do not implement)
-
-1. **Understand** — restate outcome in one line.
-2. **Codebase** — search/read; note gaps and files.
-3. **Duplicates** — `gh issue list --repo {{GH_REPO}} --state open --search "…"`
-4. **Create issue** via `./scripts/gh-triage-issue.sh`:
-   - Title: `[Bug]:` / `[Feature]:`
-   - Body: follow `docs/issue-body.example.md` — must include `## Acceptance criteria` with `- [ ]`
-   - Labels: `bug` or `enhancement`; `priority:…`; `client-facing` if user would notice
-5. **Board** — script adds to project; sync Priority/Focus.
-6. **Reply** — issue URL, summary, priority; **do not code**.
-
-End with: *"Review the issue; tell me which # to implement first."*
-
-## Phase 2 — Implement (only after user picks)
-
-Triggers: *Implement #N*, *kerjakan #N*, *LGTM on #N*, *approved #N*.
-
-1. Read acceptance criteria.
-2. Focused diff; tests when non-trivial.
-3. PR: `Fixes #N`; changelog if user-facing.
-4. Commits only when user asks.
-
-## Phase 3 — Close-out after QA
-
-Triggers: user says fix **works** / **ok** / **sudah work** for **#N**.
-
-1. Verify AC in codebase + commits.
-2. `./scripts/gh-close-verified-issue.sh N --comment-file …`
-3. Do not ask user to checklist manually.
-
-## Merge & push (when user asks)
-
-{{MERGE_PUSH_SECTION}}
-
-## Branch check (AI)
-
-Before any merge/push instructions, run **`git branch -a`**. Use `.workflow-kit.env` (`SINGLE_BRANCH`, `INTEGRATION_BRANCH`, `PRODUCTION_BRANCH`). If docs mention `dev` but the branch does not exist, follow **single-branch** rules in `AGENTS.md` — never invent branches.
-
-## Constants
-
-| Key | Value |
-|-----|--------|
-| Repo | `{{GH_REPO}}` |
-| Project | {{PROJECT_BOARD_URL}} |
-
-Requires `gh` with `repo` + `project` scopes.
+Repo: `{{GH_REPO}}` · Board: {{PROJECT_BOARD_URL}}
