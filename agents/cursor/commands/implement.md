@@ -7,7 +7,7 @@ Follow `AGENTS.md` Phase 2:
 3. Branch `feat/#N-slug` or `fix/#N-slug`.
 4. Implement focused diff.
 5. `./scripts/gh-set-issue-status.sh N progress`
-6. **Self-verify** per `AGENTS.md` (max 3 rounds) before claiming done.
+6. **Self-verify** per `AGENTS.md` — AC scope only; max rounds from `VERIFY_MAX_ROUNDS` or user override for this task.
 7. `./scripts/gh-set-issue-status.sh N qa` when ready for human QA.
 8. PR `Fixes #N`. Commit only when user asks.
 

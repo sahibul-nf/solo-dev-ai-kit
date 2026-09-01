@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
-# After user confirms QA: check AC, post comment, close issue, set board Done.
+# After human QA: check AC boxes, post comment, close issue, set board Done.
 #
 # Usage:
 #   ./scripts/gh-close-verified-issue.sh 14 --comment-file /tmp/close-14.md
 #   ./scripts/gh-close-verified-issue.sh 14 --comment "Verified on staging" --no-close
+#
+# Flags:
+#   --no-check-ac   Skip checking AC boxes in issue body
+#   --no-close      Comment only; do not close issue or set board Done
+#
+# Template: docs/close-comment.example.md
+# Exit: 0 success; 1 missing args or gh failure
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

@@ -46,8 +46,14 @@ Antigravity uses the same pattern: `.agents/rules/` pointer with `trigger: alway
 
 ## UI verification tools
 
-Bootstrap reports availability (does not install browsers):
+Bootstrap reports availability (does not install tools). Verify **AC scope only** unless user requests full E2E.
 
-1. **Cursor IDE browser** — default in Cursor; no project install.
-2. **Playwright CLI** — optional fallback if already on device/project.
-3. Fill in `docs/how-to-run.md` with local dev URL so browser tools can reach the app.
+| Stack | Default | Optional fallback |
+|-------|---------|-------------------|
+| **Web** | Cursor IDE browser | Playwright (manual install) |
+| **Mobile** | `flutter test` / integration tests | [MobAI](https://mobai.run) + `npx mobai-mcp` (manual install) |
+
+- Set `APP_STACK` in `.workflow-kit.env` (`web` · `mobile` · `both`). Bootstrap auto-detects `pubspec.yaml` → `mobile`.
+- Fill in `docs/how-to-run.md` with local URL (web) or emulator + test commands (mobile).
+- Run `./scripts/gh-check-ui-tools.sh` after bootstrap.
+- Kit **never** auto-installs MobAI, Playwright, or Chromium.

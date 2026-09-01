@@ -19,11 +19,12 @@ Install **solo-dev-ai-kit** ke project ini. Saya tidak menjalankan perintah term
 |---------|--------|
 | **Target** | workspace saat ini (app — **jangan** ubah repo kit) |
 | **GitHub repo** | `[owner/repo]` atau auto-detect dari `git remote` |
-| **Stack** | `[Next.js / Flutter / …]` |
+| **Stack** | `[Next.js / Flutter / …]` → `--app-stack web|mobile|both` (auto: `pubspec.yaml` → mobile) |
 | **AI tools** | `[cursor,antigravity]` (disarankan) |
 | **Perintah tes CI** | `[npm test / flutter test / pytest]` |
 | **Branch** | auto-detect (`dev`→`main` jika `dev` ada; else single branch). Atau `--main-only` |
 | **Setup GitHub** | `[ya / tidak]` — label, project board, kolom QA |
+| **Max putaran verify** | `[default 3]` — `--verify-max-rounds N`; override per task di chat (*max 2 putaran untuk #12*) |
 | **Client reports** | `[ya / tidak]` — label `client-facing` |
 
 ## Yang harus kamu lakukan
@@ -41,9 +42,9 @@ Install **solo-dev-ai-kit** ke project ini. Saya tidak menjalankan perintah term
    ```
 
 3. **Jangan timpa** `AGENTS.md` atau `docs/how-to-run.md` custom saya kecuali saya minta `--force`.
-4. **Isi** `docs/how-to-run.md` — URL dev lokal, perintah start, tes, akun dummy (tanpa secret di git).
-5. **Laporkan** output `./scripts/gh-check-ui-tools.sh` (cek saja — jangan install Playwright/Chromium).
-6. **Ringkas** file yang ter-install per platform dan URL project board.
+4. **Isi** `docs/how-to-run.md` — ganti semua `TBD`; hapus section web/mobile jika tidak dipakai.
+5. **Laporkan** output `./scripts/gh-check-ui-tools.sh` (cek saja — jangan install Playwright atau MobAI).
+6. **Ringkas** file ter-install, URL board, dan arahkan ke `docs/troubleshooting.md` + `scripts/README.md`.
 7. **Smoke test** — triage saja (tanpa code): *"Login redirect loop after token refresh"*. Harapan: issue + acceptance criteria + *mau kerjakan # berapa dulu?*
 
 Jangan implement fitur app. Berhenti setelah install + ringkasan smoke test.

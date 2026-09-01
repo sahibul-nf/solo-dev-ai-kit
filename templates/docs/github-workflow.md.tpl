@@ -2,6 +2,20 @@
 
 Solo dev + AI: **Issues**, **Projects**, and agent rules stay in sync.
 
+## Cheatsheet
+
+| You say | AI does |
+|---------|---------|
+| Describe bug/feature | Triage → issue → board → *which # first?* |
+| `Implement #N` | Code → self-verify (**AC only**) → board **QA** |
+| `sudah work #N` | `gh-close-verified-issue.sh` → closed + **Done** |
+| *skip issue* / tiny fix | Fix + verify (no issue) |
+| *max 2 rounds* / *5 putaran* | Override verify loops for **this issue only** |
+| *test end-to-end full* | Full app regression (you asked — not default) |
+
+**Verify scope:** acceptance criteria only · **Default max rounds:** see `VERIFY_MAX_ROUNDS` in `.workflow-kit.env`  
+**Docs:** `AGENTS.md` · `docs/how-to-run.md` · `docs/troubleshooting.md` · `scripts/README.md`
+
 ## Issues
 
 - **One issue = one shippable outcome** with acceptance criteria.
@@ -42,7 +56,7 @@ Filter **Focus = This week** for your sprint.
 1. Pick **This week** issue → **In Progress** (`gh-set-issue-status.sh N progress`).
 2. Branch `feat/#N-slug` → implement → self-verify → **QA** on board.
 3. PR `Fixes #N` → merge when ready.
-4. You confirm *works* → AI runs `gh-close-verified-issue.sh` → issue closed + **Done**.
+4. You confirm *works* → AI runs `gh-close-verified-issue.sh` with `docs/close-comment.example.md` as template → issue closed + **Done**.
 
 ## CI & deploy
 

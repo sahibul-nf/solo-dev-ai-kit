@@ -70,16 +70,22 @@ gh auth refresh -h github.com -s repo,project,read:project
 your-project/
 ├── AGENTS.md                 # Canonical (all agents)
 ├── docs/
-│   ├── github-workflow.md
-│   ├── agent-platforms.md    # Per-platform official setup
-│   └── how-to-run.md         # Dev URL, tests, test accounts (fill in)
-├── .cursor/rules/              # if cursor
-├── .cursor/commands/           # if cursor (/triage, /implement, /verify, /close)
-├── .agents/rules/              # if antigravity
-├── CLAUDE.md                   # if claude (stub only)
-├── GEMINI.md + .gemini/        # if gemini
+│   ├── github-workflow.md    # Cheatsheet + daily flow
+│   ├── agent-platforms.md
+│   ├── how-to-run.md         # Replace TBD — dev URL / emulator / tests
+│   ├── troubleshooting.md
+│   ├── updating-workflow-kit.md
+│   ├── update-prompt.md      # Agent checklist for kit refresh (/update)
+│   └── close-comment.example.md
+├── .cursor/rules/            # if cursor
+├── .cursor/commands/         # if cursor (/triage, /implement, /verify, /close, /update)
+├── .agents/rules/            # if antigravity
+├── CLAUDE.md                 # if claude (stub)
+├── GEMINI.md + .gemini/      # if gemini
 ├── .workflow-kit.env
-├── scripts/gh-*.sh
+├── scripts/
+│   ├── README.md             # All gh-*.sh — flags & examples
+│   └── gh-*.sh
 └── .github/ISSUE_TEMPLATE/
 ```
 
@@ -87,11 +93,15 @@ Codex needs **no extra file** — it reads `AGENTS.md` natively.
 
 ## Re-bootstrap / add a platform later
 
+See **[UPDATE_PROMPT.md](UPDATE_PROMPT.md)** (or [.id](UPDATE_PROMPT.id.md)) to pull kit updates into an existing project. After bootstrap, the app project also has `docs/update-prompt.md` and `docs/updating-workflow-kit.md`.
+
 **Via AI:** open the app project and say:
 
 ```text
-Re-bootstrap solo-dev-ai-kit into this project from [path/to/solo-dev-ai-kit] with --tools cursor,antigravity,claude. Use --force only if I ask to overwrite AGENTS.md.
+Update workflow kit to the latest version
 ```
+
+Or use Cursor slash command **`/update`**. The agent follows `AGENTS.md` → dry-run bootstrap, then apply without `--force`.
 
 **Via terminal:**
 
@@ -117,6 +127,8 @@ Re-bootstrap solo-dev-ai-kit into this project from [path/to/solo-dev-ai-kit] wi
 | `--client-reports` | off | `client-facing` label |
 | `--run-github-setup` | off | Run `gh-setup-all.sh` |
 | `--force` | off | Overwrite `AGENTS.md` and `docs/how-to-run.md` if they exist |
+| `--app-stack` | auto | `web` · `mobile` · `both` — auto: `pubspec.yaml` → mobile, else web |
+| `--verify-max-rounds` | `3` | Max self-verify loops per task (override per issue in chat) |
 
 ## Workflow (3 phases)
 
@@ -126,7 +138,7 @@ Re-bootstrap solo-dev-ai-kit into this project from [path/to/solo-dev-ai-kit] wi
 
 **Intent router:** tiny fixes skip issue; real work gets AC checklist. See `AGENTS.md`.
 
-**UI verify:** Cursor browser (default); Playwright optional — kit checks, never auto-installs.
+**UI verify:** AC scope only (not full app unless you ask). Web → Cursor browser; mobile → tests + optional [MobAI](https://mobai.run). Kit checks, never auto-installs.
 
 ## Publish
 

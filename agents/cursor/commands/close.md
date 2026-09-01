@@ -1,7 +1,7 @@
 Phase 3 — close-out after human QA for issue `#N` (user must confirm *works* / *ok* / *sudah work*).
 
 1. Verify AC against code/commits (read-only).
-2. Write closing comment summarizing what was verified.
+2. Write closing comment from `docs/close-comment.example.md` → save e.g. `/tmp/close-N.md`.
 3. Run:
 
 ```bash
@@ -10,4 +10,4 @@ Phase 3 — close-out after human QA for issue `#N` (user must confirm *works* /
 
 This checks AC boxes, posts comment, closes issue, and sets board **Done**.
 
-Use `--no-close` only if user explicitly wants comment-only.
+Use `--no-close` only if user explicitly wants comment-only. See `scripts/README.md` for flags.

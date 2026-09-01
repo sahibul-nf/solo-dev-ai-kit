@@ -5,7 +5,10 @@
 #   ./scripts/gh-set-issue-status.sh 14 progress
 #   ./scripts/gh-set-issue-status.sh 14 qa
 #
-# Status values: backlog | progress | qa | done
+# Status: backlog | progress | qa | done
+#
+# If GH_PROJECT_NUM is unset: prints note and exits 0 (no-op).
+# Exit: 0 success or no-op; 1 unknown status or gh failure
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

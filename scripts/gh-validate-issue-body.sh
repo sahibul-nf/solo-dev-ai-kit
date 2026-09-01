@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Validate issue body has acceptance criteria checklist.
+#
 # Usage: ./scripts/gh-validate-issue-body.sh --body-file /tmp/body.md
+#
+# Requires: ## Acceptance criteria heading and at least one "- [ ]" line.
+# Exit: 0 valid; 1 missing AC structure
 set -euo pipefail
 
 BODY_FILE=""
