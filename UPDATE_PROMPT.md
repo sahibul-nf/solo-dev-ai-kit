@@ -57,13 +57,15 @@ Before writing, bootstrap saves `.workflow-kit/env.backup`.
 
 **Updates:** scripts (`scripts/gh-*.sh`), cursor rules/commands, most `docs/*`, issue templates, `.workflow-kit/installed`.
 
-**Preserves (skipped if customized):** `AGENTS.md`, `docs/how-to-run.md`.
+**Preserves (skipped if customized):** `docs/how-to-run.md`.
 
-After update: **diff `AGENTS.md` against kit template** and tell me what changed in the new kanon so I can merge manually if needed.
+**`AGENTS.md`:** auto-merges kit workflow sections (intent router, phases, self-verify, Related, etc.) and **preserves** project-specific `##` sections or content in `<!-- workflow-kit:project-specific -->`.
+
+After update: review `git diff AGENTS.md` — project-specific blocks should be intact.
 
 ### With `--force` (only if I say so)
 
-Overwrites `AGENTS.md` and `docs/how-to-run.md` with latest templates. Warn me before running `--force`.
+Overwrites `AGENTS.md` (including project-specific sections) and `docs/how-to-run.md` with latest templates. Warn me before running `--force`.
 
 ## After bootstrap
 

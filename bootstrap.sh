@@ -246,6 +246,32 @@ render_if_allowed() {
   render_tpl "$src" "$dst"
 }
 
+render_or_merge_agents() {
+  local src="$1" dst="$2"
+  local tmp_new
+  tmp_new="$(mktemp)"
+
+  if $DRY_RUN; then
+    if [[ -f "$dst" && "$FORCE" != true ]]; then
+      echo "  [dry-run] would merge AGENTS.md (kit sections + preserve project-specific)"
+    else
+      echo "  [dry-run] would write: $dst"
+    fi
+    rm -f "$tmp_new"
+    return 0
+  fi
+
+  render_tpl "$src" "$tmp_new"
+
+  if [[ -f "$dst" && "$FORCE" != true ]]; then
+    python3 "$KIT_DIR/scripts/merge-agents-md.py" "$dst" "$tmp_new" "$dst"
+    echo "  merged AGENTS.md (workflow kit sections updated; project-specific preserved)"
+  else
+    cp "$tmp_new" "$dst"
+  fi
+  rm -f "$tmp_new"
+}
+
 write_file() {
   local dst="$1"
   shift
@@ -364,7 +390,7 @@ APP_STACK=$APP_STACK
 VERIFY_MAX_ROUNDS=$VERIFY_MAX_ROUNDS
 EOF
 
-render_if_allowed "$KIT_DIR/templates/AGENTS.md.tpl" "$TARGET/AGENTS.md"
+render_or_merge_agents "$KIT_DIR/templates/AGENTS.md.tpl" "$TARGET/AGENTS.md"
 render_tpl "$KIT_DIR/templates/docs/github-workflow.md.tpl" "$TARGET/docs/github-workflow.md"
 render_tpl "$KIT_DIR/templates/docs/agent-platforms.md.tpl" "$TARGET/docs/agent-platforms.md"
 render_if_allowed "$KIT_DIR/templates/docs/how-to-run.md.tpl" "$TARGET/docs/how-to-run.md"
@@ -465,7 +491,7 @@ if $DRY_RUN; then
   echo "  [dry-run] would write .workflow-kit/installed"
 else
 {
-  echo "kit_version=8"
+  echo "kit_version=9"
   echo "tools=$TOOLS"
   echo "app_stack=$APP_STACK"
   echo "single_branch=$SINGLE_BRANCH"
@@ -499,7 +525,7 @@ if $RUN_GITHUB; then
         export_snippet "$([[ "$SINGLE_BRANCH" == true ]] && echo git-deploy-single.md || echo git-deploy-dual.md)" GIT_DEPLOY_SECTION
         export_snippet "$([[ "$SINGLE_BRANCH" == true ]] && echo ci-deploy-single.md || echo ci-deploy-dual.md)" CI_DEPLOY_SECTION
         export_snippet "$([[ "$SINGLE_BRANCH" == true ]] && echo merge-push-single.md || echo merge-push-dual.md)" MERGE_PUSH_SECTION
-        render_tpl "$KIT_DIR/templates/AGENTS.md.tpl" "$TARGET/AGENTS.md"
+        render_or_merge_agents "$KIT_DIR/templates/AGENTS.md.tpl" "$TARGET/AGENTS.md"
         render_tpl "$KIT_DIR/templates/docs/github-workflow.md.tpl" "$TARGET/docs/github-workflow.md"
         render_tpl "$KIT_DIR/templates/docs/agent-platforms.md.tpl" "$TARGET/docs/agent-platforms.md"
       else

@@ -13,6 +13,7 @@ Shell helpers for GitHub Issues + Project board. All scripts load `.workflow-kit
 | `gh-set-issue-status.sh` | Move issue on Kanban: `backlog` · `progress` · `qa` · `done` |
 | `gh-close-verified-issue.sh` | After human QA: check AC, comment, close issue, set **Done** |
 | `gh-check-ui-tools.sh` | Report web/mobile verify tools (check only — never installs) |
+| `merge-agents-md.py` | Used by bootstrap to refresh kit sections in `AGENTS.md` while keeping project-specific blocks |
 | `gh-setup-all.sh` | One-shot: labels + project board + QA column |
 | `gh-setup-project.sh` | Create/link project; writes `GH_PROJECT_NUM` to `.workflow-kit.env` |
 | `gh-configure-project.sh` | Board title, Priority/Focus fields, sync from labels |

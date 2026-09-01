@@ -126,7 +126,7 @@ Or use Cursor slash command **`/update`**. The agent follows `AGENTS.md` → dry
 | `--project-title` | `{repo} delivery` | GitHub Project name |
 | `--client-reports` | off | `client-facing` label |
 | `--run-github-setup` | off | Run `gh-setup-all.sh` |
-| `--force` | off | Overwrite `AGENTS.md` and `docs/how-to-run.md` if they exist |
+| `--force` | off | Overwrite `AGENTS.md` (drops project-specific sections) and `docs/how-to-run.md` |
 | `--app-stack` | auto | `web` · `mobile` · `both` — auto: `pubspec.yaml` → mobile, else web |
 | `--verify-max-rounds` | `3` | Max self-verify loops per task (override per issue in chat) |
 

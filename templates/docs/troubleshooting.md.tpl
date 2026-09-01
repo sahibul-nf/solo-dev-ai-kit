@@ -77,7 +77,7 @@ See **`docs/updating-workflow-kit.md`** for the full update flow when the kit re
 /path/to/solo-dev-ai-kit/bootstrap.sh --target . --repo {{GH_REPO}} --tools cursor,antigravity
 ```
 
-Without `--force`: keeps your `AGENTS.md` and `docs/how-to-run.md`. Use `--force` to overwrite.
+Without `--force`: merges kit workflow sections into `AGENTS.md` and keeps project-specific blocks; keeps your `docs/how-to-run.md`. Use `--force` to overwrite both completely.
 
 ## Board URL still placeholder in docs
 

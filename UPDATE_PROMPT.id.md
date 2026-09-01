@@ -57,13 +57,15 @@ Sebelum menulis, bootstrap menyimpan `.workflow-kit/env.backup`.
 
 **Ter-update:** skrip, cursor rules/commands, sebagian besar `docs/*`, issue templates, `.workflow-kit/installed`.
 
-**Tetap (jika sudah ada):** `AGENTS.md`, `docs/how-to-run.md`.
+**`AGENTS.md`:** auto-merge bagian workflow kit (intent router, phases, self-verify, Related, dll.) dan **pertahankan** section project-specific (mis. PukatFlow) atau isi di `<!-- workflow-kit:project-specific -->`.
 
-Setelah update: **bandingkan `AGENTS.md` dengan template kit terbaru** — beri tahu saya perubahan kanon agar bisa merge manual.
+**Tetap (jika sudah ada):** `docs/how-to-run.md`.
+
+Setelah update: cek `git diff AGENTS.md` — blok project-specific harus masih ada.
 
 ### Dengan `--force` (hanya jika saya minta)
 
-Menimpa `AGENTS.md` dan `docs/how-to-run.md`. Ingatkan saya sebelum pakai `--force`.
+Menimpa `AGENTS.md` (termasuk section project-specific) dan `docs/how-to-run.md`. Ingatkan saya sebelum pakai `--force`.
 
 ## Setelah bootstrap
 

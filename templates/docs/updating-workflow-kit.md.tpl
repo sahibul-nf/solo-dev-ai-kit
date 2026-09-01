@@ -6,7 +6,7 @@ When [solo-dev-ai-kit](https://github.com/sahibul-nf/solo-dev-ai-kit) releases u
 
 ```bash
 cat .workflow-kit/installed
-# kit_version=8
+# kit_version=9
 # tools=cursor,antigravity
 # app_stack=mobile
 ```
@@ -35,14 +35,15 @@ A backup is saved to `.workflow-kit/env.backup` before the env file is rewritten
 
 | Always refreshed | Preserved if you customized |
 |------------------|----------------------------|
-| `scripts/*.sh`, `scripts/README.md` | `AGENTS.md` |
-| `.cursor/rules`, `.cursor/commands` | `docs/how-to-run.md` |
+| `scripts/*.sh`, `scripts/README.md` | `docs/how-to-run.md` |
+| `.cursor/rules`, `.cursor/commands` | |
 | `docs/github-workflow.md`, `docs/troubleshooting.md` | |
 | `docs/updating-workflow-kit.md`, `docs/update-prompt.md` | |
 | `docs/close-comment.example.md`, issue templates | |
+| `AGENTS.md` — **kit workflow sections merged**; project-specific `##` blocks kept | |
 | `.workflow-kit/installed` (`kit_version`) | |
 
-After update: review `git diff`. If `AGENTS.md` was skipped, read what changed in the kit's `templates/AGENTS.md.tpl` and merge important rules manually.
+After update: review `git diff`. Custom app guidelines under `<!-- workflow-kit:project-specific -->` (or unknown `##` headings) stay in place; kit sections (intent router, self-verify, etc.) refresh automatically.
 
 ## Full overwrite
 
