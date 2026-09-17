@@ -16,6 +16,7 @@ alwaysApply: true
 5. **`Implement #N` / `kerjakan #N`** → Phase 2; board **AI Working** → self-verify → **AI Review**; labels do not authorize orchestrators.
 6. **`sudah work` / `ok` for `#N`** → Phase 3 close-out script → **Done**.
 7. **`update workflow kit` / `/update`** → read `docs/update-prompt.md` + `docs/updating-workflow-kit.md`; dry-run bootstrap, then apply without `--force`.
+8. **`uninstall workflow kit` / `/uninstall`** → read `docs/uninstall-prompt.md`; dry-run `uninstall-workflow-kit.sh`; no GitHub board changes.
 
 **Orchestrators:** only **Project Status = Ready for AI** authorizes autonomous pickup — not `ai-ready` labels.
 

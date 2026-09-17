@@ -401,6 +401,9 @@ render_tpl "$KIT_DIR/templates/docs/orchestrator-integration.md.tpl" "$TARGET/do
 render_tpl "$KIT_DIR/templates/docs/updating-workflow-kit.md.tpl" "$TARGET/docs/updating-workflow-kit.md"
 copy_file "$KIT_DIR/UPDATE_PROMPT.md" "$TARGET/docs/update-prompt.md"
 copy_file "$KIT_DIR/UPDATE_PROMPT.id.md" "$TARGET/docs/update-prompt.id.md"
+copy_file "$KIT_DIR/UNINSTALL_PROMPT.md" "$TARGET/docs/uninstall-prompt.md"
+copy_file "$KIT_DIR/UNINSTALL_PROMPT.id.md" "$TARGET/docs/uninstall-prompt.id.md"
+render_tpl "$KIT_DIR/templates/docs/uninstalling-workflow-kit.md.tpl" "$TARGET/docs/uninstalling-workflow-kit.md"
 
 [[ -f "$TARGET/CHANGELOG.md" ]] || copy_file "$KIT_DIR/templates/CHANGELOG.md.tpl" "$TARGET/CHANGELOG.md"
 
@@ -492,7 +495,7 @@ if $DRY_RUN; then
   echo "  [dry-run] would write .workflow-kit/installed"
 else
 {
-  echo "kit_version=10"
+  echo "kit_version=11"
   echo "tools=$TOOLS"
   echo "app_stack=$APP_STACK"
   echo "single_branch=$SINGLE_BRANCH"

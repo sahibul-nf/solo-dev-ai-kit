@@ -77,9 +77,11 @@ your-project/
 │   ├── updating-workflow-kit.md
 │   ├── orchestrator-integration.md  # Optional Paperclip-style board polling
 │   ├── update-prompt.md      # Agent checklist for kit refresh (/update)
+│   ├── uninstalling-workflow-kit.md
+│   ├── uninstall-prompt.md   # Agent checklist for uninstall
 │   └── close-comment.example.md
 ├── .cursor/rules/            # if cursor
-├── .cursor/commands/         # if cursor (/triage, /implement, /verify, /close, /update)
+├── .cursor/commands/         # if cursor (/triage, /implement, /verify, /close, /update, /uninstall)
 ├── .agents/rules/            # if antigravity
 ├── CLAUDE.md                 # if claude (stub)
 ├── GEMINI.md + .gemini/      # if gemini
@@ -91,6 +93,17 @@ your-project/
 ```
 
 Codex needs **no extra file** — it reads `AGENTS.md` natively.
+
+## Uninstall (local files only)
+
+Does **not** delete GitHub Issues, Project board, or labels.
+
+```bash
+/path/to/solo-dev-ai-kit/uninstall-workflow-kit.sh --target /path/to/your-app --dry-run
+/path/to/solo-dev-ai-kit/uninstall-workflow-kit.sh --target /path/to/your-app
+```
+
+Or paste **[UNINSTALL_PROMPT.md](UNINSTALL_PROMPT.md)** (or [.id](UNINSTALL_PROMPT.id.md)) into Cursor Agent mode.
 
 ## Re-bootstrap / add a platform later
 

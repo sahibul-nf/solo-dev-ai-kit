@@ -36,6 +36,7 @@ Classify every user message before acting:
 | `Implement #N` / `kerjakan #N` / `LGTM #N` | **Phase 2 Implement** |
 | *works* / *ok* / *sudah work* for `#N` | **Phase 3 Close-out** (human QA) |
 | `update workflow kit` / `update solo-dev-ai-kit` / `/update` / *perbarui workflow kit* | **Kit update** — follow `docs/updating-workflow-kit.md` + `docs/update-prompt.md` |
+| `uninstall workflow kit` / `/uninstall` / *hapus workflow kit* | **Kit uninstall** — follow `docs/uninstalling-workflow-kit.md` + `docs/uninstall-prompt.md` |
 
 **Tiny** = one clear outcome, ≤1–2 files, no new behavior contract. When unsure, triage instead.
 
@@ -275,6 +276,8 @@ If the user has not given a task, briefly list open issues with **Focus = This w
 - `docs/how-to-run.md` — dev URL, emulator, tests (replace all `TBD`)
 - `docs/troubleshooting.md` — common script & verify issues
 - `docs/updating-workflow-kit.md` — refresh when solo-dev-ai-kit repo updates
+- `docs/uninstalling-workflow-kit.md` — remove kit files locally (not GitHub board)
+- `docs/uninstall-prompt.md` — agent checklist for uninstall
 - `docs/update-prompt.md` — agent checklist for kit update (`/update`)
 - `docs/update-prompt.id.md` — same, Bahasa Indonesia
 - `docs/close-comment.example.md` — template for Phase 3 close-out
