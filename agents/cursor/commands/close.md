@@ -1,5 +1,7 @@
 Phase 3 — close-out after human QA for issue `#N` (user must confirm *works* / *ok* / *sudah work*).
 
+Human should have reviewed the PR from **Human Review** / **QA** / **AI Review** before close-out.
+
 1. Verify AC against code/commits (read-only).
 2. Write closing comment from `docs/close-comment.example.md` → save e.g. `/tmp/close-N.md`.
 3. Run:

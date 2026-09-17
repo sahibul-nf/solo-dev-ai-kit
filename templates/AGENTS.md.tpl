@@ -41,6 +41,43 @@ Classify every user message before acting:
 
 **Skip triage:** user names `#N`, says *skip issue* / *just fix*, or asks a question only.
 
+**Orchestrator vs chat:** External orchestrators (e.g. Paperclip) may implement **only** issues whose **Project Status** is **Ready for AI**. Chat triggers (`Implement #N`, `/implement`) are **human authorization in session** — they do not replace board status for autonomous pickup. **Labels are metadata only** — never treat `ai-ready` or any label as authorization to execute.
+
+## Workflow roles
+
+| Concept | Role |
+|---------|------|
+| **GitHub Issue** | Unit of work + acceptance criteria |
+| **Project Status** | Workflow state and **authorization** for autonomous execution |
+| **Labels** | Metadata (`bug`, `priority:*`, `complexity:*`, `ai-blocked`) — not execution triggers |
+| **Coding agent** | Implements one issue; follows this file |
+| **Orchestrator** | Optional control plane — polls board, assigns agent runs |
+| **Pull Request** | Reviewable implementation artifact |
+| **Human** | Moves issues on board, reviews PRs, merges, closes |
+
+## Project board Status (workflow contract)
+
+**Source of truth:** GitHub Project **Status** field — not issue labels.
+
+Run once per project to add columns: `./scripts/gh-ensure-project-status.sh`
+
+| Status | Who moves here | AI may execute? |
+|--------|----------------|-----------------|
+| **Backlog** / **Todo** | Human (triage) | **No** — future or unscoped work |
+| **Ready for AI** | Human only — explicit authorization | **Yes** (orchestrators) — requirements clear, scope acceptable |
+| **AI Working** | Agent during implement | **Yes** — branch/worktree, commits, tests, PR |
+| **AI Review** | Agent after self-verify | **No new code** — summarize, link PR, report checks |
+| **Human Review** / **QA** | Human or agent after verify | **No** — human reviews diff/PR |
+| **Done** | Human after merge + *sudah work* | **No** |
+
+**`/triage` never sets Ready for AI.** Human drags the card when requirements are ready for autonomous work.
+
+Script keys (preferred column → fallback): `backlog` → Backlog\|Todo · `ready-for-ai` → Ready for AI · `ai-working` / `progress` → AI Working\|In Progress · `ai-review` → AI Review\|QA · `human-review` / `qa` → Human Review\|QA · `done` → Done
+
+```bash
+./scripts/gh-set-issue-status.sh <N> backlog|ready-for-ai|ai-working|ai-review|human-review|done
+```
+
 ## Phase 1 — Triage (no coding)
 
 1. Investigate codebase (read-only).
@@ -49,26 +86,55 @@ Classify every user message before acting:
 4. New issue via `./scripts/gh-triage-issue.sh`:
    - Title: `[Bug]:` / `[Feature]:`
    - Body: follow `docs/issue-body.example.md` — must include `## Acceptance criteria` with `- [ ]` lines
-   - Labels: `bug` / `enhancement`; `priority:high|medium|low`; `client-facing` if user-visible
-5. Board: script adds to project; `./scripts/gh-set-issue-status.sh N backlog` if needed.
+   - Labels: `bug` / `enhancement`; `priority:high|medium|low`; optional `complexity:*`, `client-facing`
+5. Board: script adds to project; `./scripts/gh-set-issue-status.sh N backlog` if needed. **Never** set **Ready for AI** in triage.
 6. Reply with issue URL; **stop**.
 
-End with: *"Review the issue; tell me which # to implement first."*
+End with: *"Review the issue; move to Ready for AI when authorized, or tell me which # to implement."*
 
 ## Phase 2 — Implement
 
-Triggers: *Implement #N*, *kerjakan #N*, *LGTM #N*.
+Triggers: *Implement #N*, *kerjakan #N*, *LGTM #N* (chat authorization). Orchestrators: only issues in **Ready for AI**.
 
-1. Read acceptance criteria from issue `#N`.
+1. Read acceptance criteria from issue `#N`. If **high-risk** (see AI autonomy boundaries) and requirements ambiguous → stop, comment, label `ai-needs-human` or `ai-blocked`; do not guess.
 2. **Plan before code** if >1 file or new user-facing behavior — short plan (files, risks, tests); ask LGTM unless user already said implement.
-3. Branch: `feat/#N-slug` or `fix/#N-slug`.
+3. Branch or worktree: `feat/#N-slug` or `fix/#N-slug` — smallest correct change; no unrelated refactors.
 4. Focused diff; update `CHANGELOG.md` if user-facing.
-5. `./scripts/gh-set-issue-status.sh N progress`
+5. `./scripts/gh-set-issue-status.sh N ai-working` (falls back to **In Progress** on legacy boards)
 6. **Self-verify** (required before claiming done) — see below.
-7. `./scripts/gh-set-issue-status.sh N qa` when self-verify passes or stops at gate.
-8. PR: `Fixes #N`. Commits only when user asks (or user says *commit* / *PR*).
+7. `./scripts/gh-set-issue-status.sh N ai-review` when self-verify passes or stops at gate (falls back to **QA**)
+8. PR: `Fixes #N`. Commits only when user asks (or user says *commit* / *PR*). **Do not merge** unless explicit future policy says otherwise.
 
-Do **not** close the issue after self-verify. Human QA (`sudah work`) closes it.
+Do **not** close the issue after self-verify. Human moves to **Human Review** / reviews PR; *sudah work* closes it.
+
+## AI autonomy boundaries
+
+When issue is **Ready for AI** (or human said *Implement #N* in chat), AI **may** implement autonomously:
+
+- UI fixes and small UI features
+- CRUD, validation, tests, documentation
+- Typing improvements, small refactors, small API integrations
+- Straightforward bug fixes with clear AC
+
+**Require human input before implementation** (comment + `ai-needs-human` / `ai-blocked`; do not guess):
+
+- Authentication or authorization architecture
+- Payment/billing, secrets/credentials, production infrastructure
+- Destructive data operations; DB migrations with meaningful production impact
+- Major architecture changes, large dependency migrations, irreversible operations
+- Unclear requirements or ambiguous acceptance criteria
+
+When blocked, state: (1) what is ambiguous/risky, (2) decision required, (3) options, (4) information needed from human.
+
+## Cost and autonomy principles
+
+- **One issue per execution** — no draining the backlog autonomously
+- **No continuous autonomous loops** without human or orchestrator scheduling the next run
+- **Smallest capable model**; escalate only when stuck
+- **Retry cap** — `VERIFY_MAX_ROUNDS` (override per task in chat only)
+- **Stop when unclear** — move to Human Review or comment; do not speculate on high-risk decisions
+- **Human review before merge** — PR is for review, not auto-merge
+- **Minimal context** — AC scope lock; avoid full-app exploration unless asked
 
 ## Phase 3 — Close-out (human QA)
 
@@ -144,7 +210,7 @@ Do **not** use Playwright or Cursor browser for native mobile apps.
 1. **Automated tests first** — `flutter test`, widget/integration tests per `docs/how-to-run.md`.
 2. **MobAI** (optional, recommended for native UI flows) — [mobai.run](https://mobai.run); MCP: `npx mobai-mcp` with MobAI desktop + simulator/device. **Never auto-install**; user installs manually.
 3. Use existing Puppeteer/Detox/Maestro only if already in the project.
-4. If MobAI unavailable: report test evidence + **what UI was not verified**; board **QA** for human device check.
+4. If MobAI unavailable: report test evidence + **what UI was not verified**; board **Human Review** / **QA** for human device check.
 
 ### Non-UI evidence
 
@@ -174,9 +240,21 @@ One round = implement/patch → verify → pass or fail.
 
 Before merge/push: run `git branch -a`. Use `.workflow-kit.env` (`SINGLE_BRANCH`, `INTEGRATION_BRANCH`, `PRODUCTION_BRANCH`). Never invent branches.
 
+## Orchestrator integration (optional)
+
+Platform-agnostic pattern for external runtimes (e.g. Paperclip, custom workers):
+
+1. Monitor GitHub Project **Status**.
+2. Select issues in **Ready for AI** only — ignore Backlog/Todo, In Progress, labels, and `ai-ready` labels.
+3. Assign one issue to a coding agent; agent reads `AGENTS.md` and repository instructions.
+4. Agent sets **AI Working** → implements → self-verifies → **AI Review** → opens/updates PR.
+5. Human reviews PR (**Human Review** / **QA**) → merges → *sudah work* → **Done** via Phase 3.
+
+This workflow works **without** any orchestrator (interactive Cursor/Codex/Claude/Gemini sessions).
+
 ## Session start (optional)
 
-If the user has not given a task, briefly list open issues with **Focus = This week** or **In Progress** on the board.
+If the user has not given a task, briefly list open issues with **Focus = This week** or status **Ready for AI** / **AI Working** on the board.
 
 ## Project constants
 
@@ -191,7 +269,8 @@ If the user has not given a task, briefly list open issues with **Focus = This w
 
 ## Related
 
-- `docs/github-workflow.md` — cheatsheet & daily flow
+- `docs/github-workflow.md` — cheatsheet, board Status, daily flow
+- `docs/orchestrator-integration.md` — optional Paperclip-style board polling
 - `docs/agent-platforms.md` — per-platform official setup
 - `docs/how-to-run.md` — dev URL, emulator, tests (replace all `TBD`)
 - `docs/troubleshooting.md` — common script & verify issues

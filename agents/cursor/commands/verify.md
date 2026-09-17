@@ -6,7 +6,7 @@ Follow `AGENTS.md` self-verify section:
 2. List each `- [ ]` and gather one evidence item per AC (tests preferred over screenshots).
 3. Classify UI / non-UI / mixed; use web browser or MobAI per `docs/how-to-run.md` and `APP_STACK`.
 4. Report pass/fail per AC with evidence.
-5. If gaps remain and under loop gate (max rounds from `AGENTS.md` / user override for this task), fix and re-verify.
-6. If passed → `./scripts/gh-set-issue-status.sh N qa`.
+5. If gaps remain and under loop gate (max rounds from `AGENTS.md` / user override), fix and re-verify.
+6. If passed → `./scripts/gh-set-issue-status.sh N ai-review` (legacy: **QA** / Human Review)
 
-Do not close the issue unless user confirms *sudah work*.
+Do not merge PR. Do not close the issue unless user confirms *sudah work*.

@@ -2,7 +2,7 @@
 
 Shell helpers for GitHub Issues + Project board. All scripts load `.workflow-kit.env` from the repo root.
 
-**Full workflow:** `AGENTS.md` · **Daily flow:** `docs/github-workflow.md` · **Problems:** `docs/troubleshooting.md`
+**Full workflow:** `AGENTS.md` · **Daily flow:** `docs/github-workflow.md` · **Orchestrators:** `docs/orchestrator-integration.md` · **Problems:** `docs/troubleshooting.md`
 
 ## Quick reference
 
@@ -10,34 +10,41 @@ Shell helpers for GitHub Issues + Project board. All scripts load `.workflow-kit
 |--------|-------------|
 | `gh-triage-issue.sh` | Create issue + add to board (Phase 1 triage) |
 | `gh-validate-issue-body.sh` | Check body has `## Acceptance criteria` + `- [ ]` (called by triage) |
-| `gh-set-issue-status.sh` | Move issue on Kanban: `backlog` · `progress` · `qa` · `done` |
+| `gh-set-issue-status.sh` | Set Project **Status** (authorization gate — not labels) |
 | `gh-close-verified-issue.sh` | After human QA: check AC, comment, close issue, set **Done** |
 | `gh-check-ui-tools.sh` | Report web/mobile verify tools (check only — never installs) |
-| `merge-agents-md.py` | Used by bootstrap to refresh kit sections in `AGENTS.md` while keeping project-specific blocks |
-| `gh-setup-all.sh` | One-shot: labels + project board + QA column |
+| `merge-agents-md.py` | Bootstrap: refresh kit sections in `AGENTS.md`; keep project-specific blocks |
+| `gh-ensure-project-status.sh` | Add Ready for AI / AI Working / AI Review / Human Review columns |
+| `gh-setup-all.sh` | One-shot: labels + project board + status columns |
 | `gh-setup-project.sh` | Create/link project; writes `GH_PROJECT_NUM` to `.workflow-kit.env` |
 | `gh-configure-project.sh` | Board title, Priority/Focus fields, sync from labels |
-| `gh-create-labels.sh` | Standard labels (`bug`, `enhancement`, `priority:*`) |
-| `gh-ensure-project-status-qa.sh` | Add **QA** column before **Done** (run once if missing) |
+| `gh-create-labels.sh` | Standard labels (`bug`, `enhancement`, `priority:*`, `complexity:*`, `ai-blocked`) |
+| `gh-ensure-project-status-qa.sh` | Legacy wrapper → `gh-ensure-project-status.sh` |
 
 ## Examples
 
 ```bash
-# Triage
+# Triage → Backlog only (never Ready for AI)
 ./scripts/gh-triage-issue.sh \
   --title "[Bug]: Login redirect loop" \
   --body-file /tmp/issue-body.md \
-  --labels "bug,priority:high"
+  --labels "bug,priority:high,complexity:medium"
 
-# Board status (during implement / QA)
+# Board status
+./scripts/gh-set-issue-status.sh 12 ready-for-ai   # human authorization
+./scripts/gh-set-issue-status.sh 12 ai-working     # implement
+./scripts/gh-set-issue-status.sh 12 ai-review      # after verify
+./scripts/gh-set-issue-status.sh 12 human-review   # human PR review
+
+# Legacy keys (still supported)
 ./scripts/gh-set-issue-status.sh 12 progress
 ./scripts/gh-set-issue-status.sh 12 qa
 
 # Close after user says "sudah work #12"
 ./scripts/gh-close-verified-issue.sh 12 --comment-file /tmp/close-12.md
 
-# Check UI tools (no install)
-./scripts/gh-check-ui-tools.sh
+# Ensure board columns
+./scripts/gh-ensure-project-status.sh
 ```
 
 ## Flags & behavior
@@ -55,14 +62,18 @@ Shell helpers for GitHub Issues + Project board. All scripts load `.workflow-kit
 
 ### `gh-set-issue-status.sh`
 
-| Status | Kanban column |
-|--------|----------------|
-| `backlog` | Backlog |
-| `progress` | In Progress |
-| `qa` | QA |
-| `done` | Done |
+| Key | Preferred column | Fallback |
+|-----|------------------|----------|
+| `backlog` | Backlog | Todo |
+| `ready-for-ai` | Ready for AI | *(none — run ensure script)* |
+| `progress`, `ai-working` | AI Working | In Progress |
+| `ai-review` | AI Review | QA |
+| `qa`, `human-review` | Human Review | QA |
+| `done` | Done | Done |
 
-If `GH_PROJECT_NUM` is unset: prints a note and **exits 0** (no-op) — issue is not on a board yet. Run `./scripts/gh-setup-project.sh`.
+**Project Status authorizes orchestrators — not labels.** An `ai-ready` label does not trigger execution.
+
+If `GH_PROJECT_NUM` is unset: prints a note and **exits 0** (no-op).
 
 ### `gh-triage-issue.sh`
 

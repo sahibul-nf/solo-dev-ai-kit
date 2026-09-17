@@ -397,6 +397,7 @@ render_if_allowed "$KIT_DIR/templates/docs/how-to-run.md.tpl" "$TARGET/docs/how-
 copy_file "$KIT_DIR/templates/issue-body.example.md" "$TARGET/docs/issue-body.example.md"
 copy_file "$KIT_DIR/templates/docs/close-comment.example.md" "$TARGET/docs/close-comment.example.md"
 render_tpl "$KIT_DIR/templates/docs/troubleshooting.md.tpl" "$TARGET/docs/troubleshooting.md"
+render_tpl "$KIT_DIR/templates/docs/orchestrator-integration.md.tpl" "$TARGET/docs/orchestrator-integration.md"
 render_tpl "$KIT_DIR/templates/docs/updating-workflow-kit.md.tpl" "$TARGET/docs/updating-workflow-kit.md"
 copy_file "$KIT_DIR/UPDATE_PROMPT.md" "$TARGET/docs/update-prompt.md"
 copy_file "$KIT_DIR/UPDATE_PROMPT.id.md" "$TARGET/docs/update-prompt.id.md"
@@ -491,7 +492,7 @@ if $DRY_RUN; then
   echo "  [dry-run] would write .workflow-kit/installed"
 else
 {
-  echo "kit_version=9"
+  echo "kit_version=10"
   echo "tools=$TOOLS"
   echo "app_stack=$APP_STACK"
   echo "single_branch=$SINGLE_BRANCH"

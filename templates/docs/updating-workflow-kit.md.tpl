@@ -6,7 +6,7 @@ When [solo-dev-ai-kit](https://github.com/sahibul-nf/solo-dev-ai-kit) releases u
 
 ```bash
 cat .workflow-kit/installed
-# kit_version=9
+# kit_version=10
 # tools=cursor,antigravity
 # app_stack=mobile
 ```

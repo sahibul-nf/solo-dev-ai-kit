@@ -75,6 +75,7 @@ your-project/
 │   ├── how-to-run.md         # Replace TBD — dev URL / emulator / tests
 │   ├── troubleshooting.md
 │   ├── updating-workflow-kit.md
+│   ├── orchestrator-integration.md  # Optional Paperclip-style board polling
 │   ├── update-prompt.md      # Agent checklist for kit refresh (/update)
 │   └── close-comment.example.md
 ├── .cursor/rules/            # if cursor
@@ -130,11 +131,13 @@ Or use Cursor slash command **`/update`**. The agent follows `AGENTS.md` → dry
 | `--app-stack` | auto | `web` · `mobile` · `both` — auto: `pubspec.yaml` → mobile, else web |
 | `--verify-max-rounds` | `3` | Max self-verify loops per task (override per issue in chat) |
 
-## Workflow (3 phases)
+## Workflow (3 phases + board Status)
 
-1. **Triage** — describe work → issue + board → stop
-2. **Implement** — `Implement #N` → self-verify → board **QA**
-3. **Close-out** — `sudah work` → `gh-close-verified-issue.sh` (closes issue + **Done**)
+1. **Triage** — describe work → issue + **Backlog** → stop (never **Ready for AI** automatically)
+2. **Implement** — `Implement #N` or orchestrator picks **Ready for AI** → **AI Working** → self-verify → **AI Review**
+3. **Close-out** — human reviews PR → `sudah work` → `gh-close-verified-issue.sh` → **Done**
+
+**Authorization:** GitHub Project **Status** (not labels). See `docs/orchestrator-integration.md` for optional Paperclip-style polling.
 
 **Intent router:** tiny fixes skip issue; real work gets AC checklist. See `AGENTS.md`.
 

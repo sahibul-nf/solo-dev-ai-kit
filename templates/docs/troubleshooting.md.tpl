@@ -23,15 +23,21 @@ gh auth refresh -h github.com -s repo,project,read:project
 
 Check `.workflow-kit.env` — `GH_PROJECT_NUM` should be a number. Re-run setup if empty.
 
-## QA column missing on board
+## Status column missing on board
 
-**Symptom:** Cannot set status to `qa`.
+**Symptom:** Cannot set status to `ai-review`, `ready-for-ai`, or `qa`.
 
 ```bash
-./scripts/gh-ensure-project-status-qa.sh
+./scripts/gh-ensure-project-status.sh
 ```
 
-Reorder columns in GitHub: Project → … → Fields → Status if needed.
+Adds **Ready for AI**, **AI Working**, **AI Review**, **Human Review**, and **QA** without moving existing cards. Reorder columns in GitHub: Project → … → Fields → Status if needed.
+
+## Orchestrator picked up wrong issue
+
+**Symptom:** Agent ran on Backlog / In Progress / label `ai-ready`.
+
+Only **Project Status = Ready for AI** authorizes autonomous orchestrator pickup. Labels are metadata. Move the card explicitly; do not rely on labels.
 
 ## Triage fails: acceptance criteria
 
