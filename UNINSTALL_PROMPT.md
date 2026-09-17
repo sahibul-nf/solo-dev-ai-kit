@@ -25,12 +25,15 @@ Uninstall **solo-dev-ai-kit** from this project. I will not run terminal myself 
 /path/to/solo-dev-ai-kit/uninstall-workflow-kit.sh --target .
 ```
 
-Default behavior:
+Default behavior (kit v12+):
 
-- Removes kit files (`.workflow-kit*`, `scripts/gh-*.sh`, cursor rules/commands, kit docs).
-- **Keeps** `docs/how-to-run.md`.
+- Reads `.workflow-kit/manifest` and removes paths **only if** they still have a kit marker (`solo-dev-ai-kit:managed` or `partial-managed` on `AGENTS.md`).
+- Files you customized (marker removed) are **skipped**.
+- **Keeps** `docs/how-to-run.md` always.
 - Extracts project-specific content from `AGENTS.md` → `docs/project-guidelines.md`, then removes `AGENTS.md`.
 - **Does not** touch GitHub board, issues, or labels.
+
+Pre-v12 installs: script falls back to legacy allowlist (or pass `--legacy-allowlist`).
 
 Use `--keep-agents` only if I ask to leave `AGENTS.md` untouched.
 

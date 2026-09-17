@@ -94,6 +94,10 @@ your-project/
 
 Codex needs **no extra file** — it reads `AGENTS.md` natively.
 
+## Managed files & safe uninstall (v12+)
+
+Bootstrap stamps kit-generated files with `solo-dev-ai-kit:managed` (or `partial-managed` on `AGENTS.md`) and writes `.workflow-kit/manifest`. Uninstall uses the manifest + markers so customized files are not deleted. Run `./scripts/verify-kit-managed.sh` in the app project to audit.
+
 ## Uninstall (local files only)
 
 Does **not** delete GitHub Issues, Project board, or labels.

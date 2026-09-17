@@ -16,6 +16,29 @@ From a clone of [solo-dev-ai-kit](https://github.com/sahibul-nf/solo-dev-ai-kit)
 
 Or paste **`docs/uninstall-prompt.md`** into Cursor Agent mode (installed copy) or **`UNINSTALL_PROMPT.md`** from the kit repo.
 
+## How removal works (kit v12+)
+
+Bootstrap writes **`.workflow-kit/manifest`** listing every path it installed. Uninstall reads that list and removes a file **only if** it still carries a kit marker:
+
+| Marker | Meaning |
+|--------|---------|
+| `<!-- solo-dev-ai-kit:managed -->` | Full kit file (docs, scripts, rules, templates) |
+| `<!-- solo-dev-ai-kit:partial-managed -->` | `AGENTS.md` — kit sections + your project-specific blocks |
+| `# solo-dev-ai-kit:managed` | Shell/Python/YAML/env files |
+| `"_solo_dev_ai_kit": { "managed": true }` | `.gemini/settings.json` |
+
+If you edited a file and removed the marker, uninstall **skips** it (treated as yours).
+
+**Always protected:** `docs/how-to-run.md` (even if stamped).
+
+**Pre-v12 installs** (no manifest): use `--legacy-allowlist` or uninstall falls back automatically when manifest is missing.
+
+Audit markers after bootstrap:
+
+```bash
+./scripts/verify-kit-managed.sh
+```
+
 ## What gets removed
 
 | Removed | Kept |
@@ -35,6 +58,7 @@ Or paste **`docs/uninstall-prompt.md`** into Cursor Agent mode (installed copy) 
 | `--dry-run` | Show what would be removed |
 | `--keep-agents` | Do not remove or extract `AGENTS.md` |
 | `--remove-changelog` | Also remove `CHANGELOG.md` |
+| `--legacy-allowlist` | Ignore markers; use path allowlist (pre-v12) |
 
 ## After uninstall
 

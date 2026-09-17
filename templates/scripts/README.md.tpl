@@ -14,6 +14,9 @@ Shell helpers for GitHub Issues + Project board. All scripts load `.workflow-kit
 | `gh-close-verified-issue.sh` | After human QA: check AC, comment, close issue, set **Done** |
 | `gh-check-ui-tools.sh` | Report web/mobile verify tools (check only — never installs) |
 | `merge-agents-md.py` | Bootstrap: refresh kit sections in `AGENTS.md`; keep project-specific blocks |
+| `kit-managed.py` | Bootstrap: stamp `solo-dev-ai-kit:managed` markers; write `.workflow-kit/manifest` |
+| `verify-kit-managed.sh` | Audit manifest paths — report missing markers before uninstall |
+| `extract-agents-project-specific.py` | Uninstall: save custom `AGENTS.md` blocks → `docs/project-guidelines.md` |
 | `gh-ensure-project-status.sh` | Add Ready for AI / AI Working / AI Review / Human Review columns |
 | `gh-setup-all.sh` | One-shot: labels + project board + status columns |
 | `gh-setup-project.sh` | Create/link project; writes `GH_PROJECT_NUM` to `.workflow-kit.env` |

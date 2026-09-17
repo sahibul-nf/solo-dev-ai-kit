@@ -25,12 +25,15 @@ Uninstall **solo-dev-ai-kit** dari project ini. Saya tidak menjalankan terminal 
 /path/to/solo-dev-ai-kit/uninstall-workflow-kit.sh --target .
 ```
 
-Default:
+Default (kit v12+):
 
-- Hapus file kit (`.workflow-kit*`, `scripts/gh-*.sh`, cursor rules/commands, docs workflow).
+- Baca `.workflow-kit/manifest`; hapus path **hanya jika** masih ada marker kit (`solo-dev-ai-kit:managed` atau `partial-managed` di `AGENTS.md`).
+- File yang kamu edit (marker dihapus) **dilewati**.
 - **Tetap** `docs/how-to-run.md`.
 - Isi project-specific dari `AGENTS.md` → `docs/project-guidelines.md`, lalu hapus `AGENTS.md`.
 - **Tidak** mengubah board/issues/labels GitHub.
+
+Instal lama (pre-v12): fallback allowlist otomatis (atau `--legacy-allowlist`).
 
 Pakai `--keep-agents` hanya jika saya minta `AGENTS.md` tidak disentuh.
 

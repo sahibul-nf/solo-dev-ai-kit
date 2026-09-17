@@ -1,5 +1,7 @@
 # Agent & maintainer guide ({{PROJECT_TITLE}})
 
+<!-- solo-dev-ai-kit:partial-managed -->
+
 **Single source of truth** for humans and AI agents. Platform-specific files only point here — they do not duplicate rules.
 
 **Active tools (this repo):** {{WORKFLOW_TOOLS_LIST}}

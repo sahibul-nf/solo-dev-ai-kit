@@ -6,7 +6,7 @@ When [solo-dev-ai-kit](https://github.com/sahibul-nf/solo-dev-ai-kit) releases u
 
 ```bash
 cat .workflow-kit/installed
-# kit_version=11
+# kit_version=12
 # tools=cursor,antigravity
 # app_stack=mobile
 ```
@@ -42,8 +42,15 @@ A backup is saved to `.workflow-kit/env.backup` before the env file is rewritten
 | `docs/close-comment.example.md`, issue templates | |
 | `AGENTS.md` — **kit workflow sections merged**; project-specific `##` blocks kept | |
 | `.workflow-kit/installed` (`kit_version`) | |
+| `.workflow-kit/manifest` + `solo-dev-ai-kit:managed` markers on kit files | |
 
 After update: review `git diff`. Custom app guidelines under `<!-- workflow-kit:project-specific -->` (or unknown `##` headings) stay in place; kit sections (intent router, self-verify, etc.) refresh automatically.
+
+Verify managed markers (optional):
+
+```bash
+./scripts/verify-kit-managed.sh
+```
 
 ## Full overwrite
 
