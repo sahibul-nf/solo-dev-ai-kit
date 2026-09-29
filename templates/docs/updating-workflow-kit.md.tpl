@@ -11,7 +11,12 @@ cat .workflow-kit/installed
 # app_stack=mobile
 ```
 
-Compare with the latest kit repo after `git pull`.
+Compare with the latest kit repo after `git pull`:
+
+```bash
+# In your solo-dev-ai-kit clone
+cat CHANGELOG.md   # or open on GitHub — lists changes per kit_version
+```
 
 ## Safe update (recommended)
 

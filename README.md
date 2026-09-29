@@ -2,6 +2,8 @@
 
 Portable bootstrap for **issue triage → implement on approval → close after QA**.
 
+**Kit releases:** see **[CHANGELOG.md](CHANGELOG.md)** (`kit_version` in `.workflow-kit/installed` after bootstrap).
+
 **Design:** one canonical `AGENTS.md` + platform-native files per [official docs](#platform-setup-official-standards).
 
 ## Platform setup (official standards)
